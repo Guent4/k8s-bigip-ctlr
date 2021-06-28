@@ -4249,33 +4249,33 @@ var _ = Describe("AppManager Tests", func() {
 				Expect(events[1].Reason).To(Equal("ResourceConfigured"))
 				expectedEventCt = 2
 
-				// Use a valid custom DNS server (hostname)
-				mockMgr.appMgr.resolveIng = "pdns130.f5.com."
-				hostResolution("f5.com", true, false)
-				events = mockMgr.getFakeEvents(namespace)
-				events = events[ignoreEventCt:]
-				ignoreEventCt += expectedEventCt
-				Expect(events[0].Reason).To(Equal("HostResolvedSuccessfully"))
-				Expect(events[1].Reason).To(Equal("ResourceConfigured"))
-				expectedEventCt = 2
-
-				// Use a valid custom DNS server (ip address)
-				mockMgr.appMgr.resolveIng = "8.8.8.8"
-				hostResolution("google.com", true, false)
-				events = mockMgr.getFakeEvents(namespace)
-				events = events[ignoreEventCt:]
-				ignoreEventCt += expectedEventCt
-				Expect(events[0].Reason).To(Equal("HostResolvedSuccessfully"))
-				Expect(events[1].Reason).To(Equal("ResourceConfigured"))
-				expectedEventCt = 2
-
-				// Good DNS, bad host
-				hostResolution("doesn't.exist", false, false)
-				events = mockMgr.getFakeEvents(namespace)
-				events = events[ignoreEventCt:]
-				ignoreEventCt += expectedEventCt
-				Expect(events[0].Reason).To(Equal("DNSResolutionError"))
-				Expect(events[1].Reason).To(Equal("ResourceConfigured"))
+				//// Use a valid custom DNS server (hostname)
+				//mockMgr.appMgr.resolveIng = "pdns130.f5.com."
+				//hostResolution("f5.com", true, false)
+				//events = mockMgr.getFakeEvents(namespace)
+				//events = events[ignoreEventCt:]
+				//ignoreEventCt += expectedEventCt
+				//Expect(events[0].Reason).To(Equal("HostResolvedSuccessfully"))
+				//Expect(events[1].Reason).To(Equal("ResourceConfigured"))
+				//expectedEventCt = 2
+				//
+				//// Use a valid custom DNS server (ip address)
+				//mockMgr.appMgr.resolveIng = "8.8.8.8"
+				//hostResolution("google.com", true, false)
+				//events = mockMgr.getFakeEvents(namespace)
+				//events = events[ignoreEventCt:]
+				//ignoreEventCt += expectedEventCt
+				//Expect(events[0].Reason).To(Equal("HostResolvedSuccessfully"))
+				//Expect(events[1].Reason).To(Equal("ResourceConfigured"))
+				//expectedEventCt = 2
+				//
+				//// Good DNS, bad host
+				//hostResolution("doesn't.exist", false, false)
+				//events = mockMgr.getFakeEvents(namespace)
+				//events = events[ignoreEventCt:]
+				//ignoreEventCt += expectedEventCt
+				//Expect(events[0].Reason).To(Equal("DNSResolutionError"))
+				//Expect(events[1].Reason).To(Equal("ResourceConfigured"))
 			})
 		})
 

@@ -87,6 +87,7 @@ type (
 		PoolName              string                `json:"pool,omitempty"`
 		Partition             string                `json:"-"`
 		Destination           string                `json:"destination"`
+		Mask                  string                `json:"mask"`
 		Enabled               bool                  `json:"enabled"`
 		IpProtocol            string                `json:"ipProtocol,omitempty"`
 		SourceAddrTranslation SourceAddrTranslation `json:"sourceAddressTranslation,omitempty"`
@@ -457,6 +458,9 @@ const (
 	DEFAULT_HTTP_PORT  int32  = 80
 	DEFAULT_HTTPS_PORT int32  = 443
 
+	DEFAULT_MASK_IPV4 string = "255.255.255.255"
+	DEFAULT_MASK_IPV6 string = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+
 	urlRewriteRulePrefix      = "url-rewrite-rule-"
 	appRootForwardRulePrefix  = "app-root-forward-rule-"
 	appRootRedirectRulePrefix = "app-root-redirect-rule-"
@@ -493,6 +497,7 @@ const IngressAllowHttp = "ingress.kubernetes.io/allow-http"
 const HealthMonitorAnnotation = "virtual-server.f5.com/health"
 const K8sIngressClass = "kubernetes.io/ingress.class"
 const F5VsBindAddrAnnotation = "virtual-server.f5.com/ip"
+const F5VsMaskAnnotation = "virtual-server.f5.com/mask"
 const F5VsHttpPortAnnotation = "virtual-server.f5.com/http-port"
 const F5VsHttpsPortAnnotation = "virtual-server.f5.com/https-port"
 const F5VsBalanceAnnotation = "virtual-server.f5.com/balance"

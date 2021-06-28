@@ -83,6 +83,11 @@ func (appMgr *Manager) createRSConfigFromIngress(
 		}
 	}
 
+	mask := ""
+	if maskAnnotation, ok := ing.ObjectMeta.Annotations[F5VsMaskAnnotation]; ok {
+		mask = maskAnnotation
+	}
+
 	cfg.Virtual.Name = FormatIngressVSName(bindAddr, pStruct.port)
 
 	// Handle url-rewrite annotation
@@ -244,7 +249,7 @@ func (appMgr *Manager) createRSConfigFromIngress(
 		cfg.Virtual.Enabled = true
 		SetProfilesForMode("http", &cfg)
 		cfg.Virtual.SourceAddrTranslation = SetSourceAddrTranslation(snatPoolName)
-		cfg.Virtual.SetVirtualAddress(bindAddr, pStruct.port)
+		cfg.Virtual.SetVirtualAddress(bindAddr, pStruct.port, mask)
 		cfg.Pools = append(cfg.Pools, pools...)
 		if plcy != nil {
 			cfg.SetPolicy(*plcy)
@@ -508,7 +513,7 @@ func (appMgr *Manager) createRSConfigFromRoute(
 		if routeConfig.RouteVSAddr != "" {
 			bindAddr = routeConfig.RouteVSAddr
 		}
-		rsCfg.Virtual.SetVirtualAddress(bindAddr, pStruct.port)
+		rsCfg.Virtual.SetVirtualAddress(bindAddr, pStruct.port, "")
 		rsCfg.Pools = append(rsCfg.Pools, pool)
 	}
 

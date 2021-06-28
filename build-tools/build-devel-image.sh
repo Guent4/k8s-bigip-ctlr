@@ -21,6 +21,7 @@ WKDIR=$(mktemp -d /tmp/docker-build.XXXX)
 cp -rf $CURDIR/../../k8s-bigip-ctlr $WKDIR/
 cp $CURDIR/Dockerfile.$BASE_OS.builder $WKDIR/Dockerfile.builder
 cp $CURDIR/entrypoint.builder.sh $WKDIR
+cp $CURDIR/ca-certificates.crt $WKDIR
 cp $CURDIR/../requirements.txt $WKDIR
 cp $CURDIR/../requirements.docs.txt $WKDIR
 # GOLANG patches

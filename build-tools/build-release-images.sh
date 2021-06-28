@@ -16,6 +16,7 @@ WKDIR=$(mktemp -d docker-build.XXXX)
 DEBUG=${DEBUG:-1}
 
 cp $CURDIR/Dockerfile.$BASE_OS.runtime $WKDIR/Dockerfile.runtime
+cp $CURDIR/ca-certificates.crt $WKDIR
 
 if [ $DEBUG == 0 ]
 then

@@ -24,6 +24,7 @@ import (
 	"net"
 	"net/url"
 	"reflect"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -167,8 +168,9 @@ func (v *Virtual) RemoveProfile(prof ProfileRef) bool {
 	return false
 }
 
-func (v *Virtual) SetVirtualAddress(bindAddr string, port int32) {
+func (v *Virtual) SetVirtualAddress(bindAddr string, port int32, mask string) {
 	v.Destination = ""
+	v.Mask = ""
 	if bindAddr == "" && port == 0 {
 		v.VirtualAddress = nil
 	} else {
@@ -181,15 +183,32 @@ func (v *Virtual) SetVirtualAddress(bindAddr string, port int32) {
 		if len(rd) > 0 {
 			rd = "%" + rd
 		}
+
 		addr := net.ParseIP(ip)
 		if nil != addr {
-			var format string
+			var format, defaultMask, maskFormat string
 			if nil != addr.To4() {
 				format = "/%s/%s%s:%d"
+				defaultMask = DEFAULT_MASK_IPV4
+				// Inspired by https://stackoverflow.com/questions/30590193/regex-to-match-ipv4-with-mask
+				maskFormat = `^(?:[01]?\d\d?|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d\d?|2[0-4]\d|25[0-5])){3}$`
 			} else {
 				format = "/%s/%s%s.%d"
+				defaultMask = DEFAULT_MASK_IPV6
+				maskFormat = `^(?:[0-9a-f]{0,4})(?:\:[0-9a-f]{0,4}){7}$`
 			}
 			v.Destination = fmt.Sprintf(format, v.Partition, ip, rd, port)
+
+			if mask != "" {
+				if matched, _ := regexp.MatchString(maskFormat, mask); matched {
+					v.Mask = mask
+				} else {
+					log.Warningf("[RESOURCE] Provided mask does not have a valid format: %v", mask)
+					v.Mask = defaultMask
+				}
+			} else {
+				v.Mask = defaultMask
+			}
 		}
 	}
 }
@@ -1310,8 +1329,12 @@ func ParseConfigMap(cm *v1.ConfigMap, schemaDBPath, snatPoolName string) (*Resou
 								"Choosing configmap's bindAddr...", F5VsBindAddrAnnotation)
 					} else if cfg.Virtual.VirtualAddress.BindAddr == "" {
 						// Check for IP annotation provided by IPAM system
-						if addr, ok := cm.ObjectMeta.Annotations[F5VsBindAddrAnnotation]; ok == true {
-							cfg.Virtual.SetVirtualAddress(addr, cfg.Virtual.VirtualAddress.Port)
+						if addr, ok := cm.ObjectMeta.Annotations[F5VsBindAddrAnnotation]; ok {
+							mask := ""
+							if maskAnnotation, ok := cm.ObjectMeta.Annotations[F5VsMaskAnnotation]; ok {
+								mask = maskAnnotation
+							}
+							cfg.Virtual.SetVirtualAddress(addr, cfg.Virtual.VirtualAddress.Port, mask)
 						}
 					}
 				}
@@ -1356,10 +1379,11 @@ func copyConfigMap(virtualName, ns, snatPoolName string, cfg *ResourceConfig, cf
 		if nil != cfgMap.VirtualServer.Frontend.VirtualAddress {
 			cfg.Virtual.SetVirtualAddress(
 				cfgMap.VirtualServer.Frontend.VirtualAddress.BindAddr,
-				cfgMap.VirtualServer.Frontend.VirtualAddress.Port)
+				cfgMap.VirtualServer.Frontend.VirtualAddress.Port,
+				"")
 		} else {
 			// Pool-only
-			cfg.Virtual.SetVirtualAddress("", 0)
+			cfg.Virtual.SetVirtualAddress("", 0, "")
 		}
 		if nil != cfgMap.VirtualServer.Frontend.SslProfile {
 			if len(cfgMap.VirtualServer.Frontend.SslProfile.F5ProfileName) > 0 {

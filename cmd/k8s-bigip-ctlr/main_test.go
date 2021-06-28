@@ -746,7 +746,7 @@ var _ = Describe("Main Tests", func() {
 			// Runs script verifying the creation of the Python process
 			cmd := exec.Command("bash", []string{"test/testBigipconfigdriver.sh"}...)
 			session, _ := Start(cmd, GinkgoWriter, GinkgoWriter)
-			Eventually(session, 30*time.Second).Should(Exit(0))
+			Eventually(session, 60*time.Second).Should(Exit(0))
 
 			// Check if configdriverOutput.tmp file exists
 			timeCount := 1000

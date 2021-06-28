@@ -1,5 +1,7 @@
 FROM python:3.6-slim-buster
 
+COPY ca-certificates.crt /etc/ssl/certs/
+
 # gcc for cgo
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		g++ \
@@ -62,10 +64,10 @@ WORKDIR $GOPATH
 COPY entrypoint.builder.sh /entrypoint.sh
 COPY requirements.txt /tmp/requirements.txt
 COPY requirements.docs.txt /tmp/requirements.docs.txt
-RUN pip install --no-cache-dir --upgrade pip==20.0.2 && \
-    pip install --no-cache-dir setuptools flake8 virtualenv && \
-	pip install --no-cache-dir -r /tmp/requirements.txt && \
-	pip install --no-cache-dir -r /tmp/requirements.docs.txt && \
+RUN pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --no-cache-dir --upgrade pip==20.0.2 && \
+    pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --no-cache-dir setuptools flake8 virtualenv && \
+	pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --no-cache-dir -r /tmp/requirements.txt && \
+	pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --no-cache-dir -r /tmp/requirements.docs.txt && \
 	go get github.com/wadey/gocovmerge && \
 	go get golang.org/x/tools/cmd/cover && \
 	go get github.com/mattn/goveralls && \

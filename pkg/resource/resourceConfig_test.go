@@ -52,7 +52,8 @@ func newResourceConfig(
 	cfg.Pools[0].ServiceName = key.ServiceName
 	cfg.Pools[0].ServicePort = key.ServicePort
 	cfg.Virtual.Name = rsName
-	cfg.Virtual.SetVirtualAddress(bindAddr, bindPort)
+	// TODO HGU
+	cfg.Virtual.SetVirtualAddress(bindAddr, bindPort, "")
 	return &cfg
 }
 

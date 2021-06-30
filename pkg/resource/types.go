@@ -90,6 +90,7 @@ type (
 		Mask                  string                `json:"mask"`
 		Enabled               bool                  `json:"enabled"`
 		IpProtocol            string                `json:"ipProtocol,omitempty"`
+		TranslateAddress      string                `json:"translateAddress,omitempty"`
 		SourceAddrTranslation SourceAddrTranslation `json:"sourceAddressTranslation,omitempty"`
 		Policies              []NameRef             `json:"policies,omitempty"`
 		IRules                []string              `json:"rules,omitempty"`
@@ -461,6 +462,8 @@ const (
 	DEFAULT_MASK_IPV4 string = "255.255.255.255"
 	DEFAULT_MASK_IPV6 string = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
 
+	DEFAULT_ADDRESS_TRANSLATION string = "enabled"
+
 	urlRewriteRulePrefix      = "url-rewrite-rule-"
 	appRootForwardRulePrefix  = "app-root-forward-rule-"
 	appRootRedirectRulePrefix = "app-root-redirect-rule-"
@@ -502,6 +505,7 @@ const F5VsHttpPortAnnotation = "virtual-server.f5.com/http-port"
 const F5VsHttpsPortAnnotation = "virtual-server.f5.com/https-port"
 const F5VsBalanceAnnotation = "virtual-server.f5.com/balance"
 const F5VsPartitionAnnotation = "virtual-server.f5.com/partition"
+const F5VsTranslateAddressAnnotation = "virtual-server.f5.com/address-translation"
 const F5VsURLRewriteAnnotation = "virtual-server.f5.com/rewrite-target-url"
 const F5VsWhitelistSourceRangeAnnotation = "virtual-server.f5.com/whitelist-source-range"
 const F5VsAllowSourceRangeAnnotation = "virtual-server.f5.com/allow-source-range"

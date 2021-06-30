@@ -88,6 +88,12 @@ func (appMgr *Manager) createRSConfigFromIngress(
 		mask = maskAnnotation
 	}
 
+	if addressTranslationAnnotation, ok := ing.ObjectMeta.Annotations[F5VsTranslateAddressAnnotation]; ok {
+		cfg.Virtual.TranslateAddress = addressTranslationAnnotation
+	} else {
+		cfg.Virtual.TranslateAddress = DEFAULT_ADDRESS_TRANSLATION
+	}
+
 	cfg.Virtual.Name = FormatIngressVSName(bindAddr, pStruct.port)
 
 	// Handle url-rewrite annotation
